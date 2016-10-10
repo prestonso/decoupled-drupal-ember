@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Decoupled Drupal with Ember</title>
+
+		<meta name="description" content="An introduction to decoupled Drupal and how to pair it with a Ember-based front end">
+		<meta name="author" content="Preston So">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Decoupled Drupal and Ember</h1>
+					<h3>Preston So</h3>
+					<p>
+						<a href="https://drupal.org/u/prestonso">prestonso</a> &bull; <a href="https://twitter.com/prestonso">@prestonso</a> &bull; <a href="http://preston.so">preston.so</a>
+					</p>
+					<p>
+						DrupalCon Dublin &bull; September 28, 2016
+					</p>
+				</section>
+
+				<section>
+					<h2>Céad míle fáilte!</h2>
+					<p>
+						<strong>Preston So</strong> has been a web developer and designer since 2001, a creative professional since 2004, and a Drupal developer since 2007. As Development Manager of Acquia Labs at Acquia, Preston leads new open-source and product initiatives. Previously, he was Technical Lead of Entertainment Weekly at Time Inc., co-founder of the Southern Colorado Drupal User Group (est. 2008), and sole proprietor of an award-winning freelance design studio. Preston is a sought-after speaker who has presented at conferences on four continents and in two languages about diverse topics such as decoupled Drupal, responsive design, front-end development, and user experience. Most recently, Preston delivered the keynote at DrupalCamp Connecticut 2016 and, in Portuguese, the keynote at DrupalCamp Campinas 2016 in Brazil.
+					</p>
+				</section>
+
+				<section>
+					<h2>What we'll cover</h2>
+					<ol>
+						<li>What is Ember?</li>
+						<li>Ember architecture</li>
+						<li>Setting up Drupal</li>
+						<li>Writing an Ember application</li>
+						<li>Epilogue: Ember + Drupal = Drupal?</li>
+					</ol>
+				</section>
+
+				<!-- 1. What is Ember? -->
+				<section>
+
+					<!-- 1.1. What is Ember? -->
+					<section>
+						<h3>What is decoupled Drupal?</h3>
+						<ul>
+							<li>Simply put, decoupled Drupal is the use of Drupal as a data provider by means of a RESTful API. There are two types of architectures in the wild which use this architecture.</li>
+							<li>In fully decoupled Drupal, Drupal serves solely as a JSON API which serves data payloads to other applications. A client-side framework (often shared isomorphically client-server) controls all rendering.</li>
+							<li>In progressively decoupled Drupal, Drupal controls some of the render to provide markup within a single application. JavaScript then takes over client-side rendering.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Problems of decoupled Drupal</h3>
+						<p>
+							Much of Drupal's robustness is lost.
+						</p>
+						<ul>
+							<li>Cross-origin requests, security, authentication, and passwords</li>
+							<li>Form validation</li>
+							<li>Content workflow and management</li>
+							<li>Layout and display management</li>
+							<li>Multilingual and localization</li>
+							<li>Accessibility and user experience</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Decoupled Drupal 8</h3>
+						<ul>
+							<li>WSCCI (Web Services and Context Core Initiative) incorporated Web Services into Drupal 8 core.</li>
+							<li>The core REST modules allow for all content entities to be exposed as JSON+HAL, and Views natively supports “REST export” as a new display type.</li>
+							<li>There are many issues with REST in core; please consider contributing to RX (REST experience) tagged issues.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Decoupled Drupal 8</h3>
+						<ul>
+							<li>RELAXed Web Services (contrib) extends the core REST API to include revisions and file attachments, as well as cross-environment UUIDs.</li>
+							<li>RELAXed's mission aligns with movement in content staging and offline-first applications, and it uses the CouchDB API specification.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>JSON API</h3>
+						<ul>
+							<li>An emerging solution, JSON API, has been promulgated in the Ember and Rails community.</li>
+							<li>JSON API is an "anti-bikeshedding" tool.</li>
+						</ul>
+					</section>
+					<section>
+						<h2>What is Ember?</h2>
+						<ul>
+							<li>The beginnings of Ember</li>
+							<li>Ember design principles</li>
+							<li>Differences with other frameworks</li>
+							<li>Drawbacks of Ember</li>
+						</ul>
+					</section>
+
+					<!-- 1.2. The beginnings of Ember -->
+					<section>
+						<h3>The beginnings of Ember</h3>
+						<ul>
+							<li>Ember is the successor of the SproutCore project, which encompassed both an application framework and widget library.</li>
+							<li>The SproutCore framework is the creation of Yehuda Katz, part of the jQuery, Ruby on Rails, and SproutCore core teams.</li>
+							<li>In 2011, the SproutCore 2.0 framework was rechristened Ember.js to reduce confusion between the SproutCore widget library.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember design principles</h3>
+						<ul>
+							<li>Focus on ambitious web applications</li>
+							<li>More productive out of the box</li>
+							<li>Stability without stagnation</li>
+							<li>Future web standards foresight</li>
+							<li>Convention over configuration</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Differences with other frameworks</h3>
+						<ul>
+							<li>Ember has a large footprint and is extremely opinionated, which makes it less ideal for small view-focused applications.</li>
+							<li>The Ember framework is not managed by corporate giants, unlike Angular and React.</li>
+							<li>Ember focuses on "ambitious" web applications which come as close to the native experience as possible.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Drawbacks of Ember</h3>
+						<ul>
+							<li>Opinionated (convention over configuration)</li>
+							<li>Large file size</li>
+							<li>Backwards compatibility</li>
+						</ul>
+					</section>
+				</section>
+
+				<!-- 2. Ember architecture -->
+				<section>
+					<section>
+						<h2>Ember architecture</h2>
+						<ul>
+							<li>Ember routes</li>
+							<li>Ember models</li>
+							<li>Ember templates</li>
+							<li>Ember components</li>
+							<li>The Ember software stack</li>
+						</ul>
+					</section>
+
+					<!-- 2.1. Routes -->
+					<section>
+						<h3>Ember routes</h3>
+						<p>In Ember, application state is represented by a URL, which has its own respective route object controlling what the user sees.</p>
+					</section>
+					<section>
+						<h3>Ember routes</h3>
+						<p>There are several ways in which the URL can be set in Ember:</p>
+						<ul>
+							<li>The user boots the app for the very first time.</li>
+							<li>The user modifies the URL either through clicking back or forward or by editing the URL bar.</li>
+							<li>The user clicks on a link in the application.</li>
+							<li>Some other event in the application modifies the URL.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember route handlers</h3>
+						<p>Route handlers render templates and load a model which is made available to the template.</p>
+					</section>
+					<section>
+						<h3>Ember templates</h3>
+						<ul>
+							<li>Templates use Handlebars syntax.</li>
+							<li>Templates are able to display properties that are available in the template's context.</li>
+							<li>A template's context is either a component or a route.</li>
+							<li>Double curly braces can contain helpers and components as well.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember models</h3>
+						<ul>
+							<li>Models represent persistent state.</li>
+							<li>Models typically persist data to a web server, but they can save to anywhere else.</li>
+							<li>When data changes, or new data is added, the model is saved.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember components</h3>
+						<ul>
+							<li>Whereas templates define an interface's appearance, components are responsible for the interface's behavior.</li>
+							<li>Components are made up of a <strong>template</strong> in Handlebars and a <strong>JavaScript file</strong> containing the component's behavior.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>The Ember software stack</h3>
+						<ul>
+							<li>Ember itself is only a framework, but there is a larger surrounding software stack which can be used.</li>
+							<li>The Ember core team is responsible for building Ember and these surrounding tools.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>The Ember software stack</h3>
+						<ul>
+							<li>Ember CLI</li>
+							<li>Ember Data</li>
+							<li>Ember Inspector</li>
+							<li>Ember FastBoot</li>
+							<li>Liquid Fire</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember CLI</h3>
+						<ul>
+							<li>Ember CLI's mission is to bring convention and configuration to build tools.</li>
+							<li>You can quickly generate a new Ember app with the default stack providing many features.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember CLI</h3>
+						<ul>
+							<li>Standard file and directory structure</li>
+							<li>Local development server with live reload</li>
+							<li>A complete testing framework</li>
+							<li>Dependency management through Bower and NPM</li>
+							<li>ES6 modules and ES6/ES7 syntax support with Babel</li>
+							<li>Asset management</li>
+							<li>Blueprints (code generators) for models, controllers, and components</li>
+							<li>Add-ons</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember Data</h3>
+						<ul>
+							<li>The majority of Ember applications use Ember Data, which is a data persistence library.</li>
+							<li>Ember Data has many of the features of object-relational mapping (ORM), but you don't need it to use Ember.</li>
+							<li><strong>Ember Data maps client-side models to server-side data.</strong></li>
+							<li>Ember Data can load and save records and relationships without additional configuration, assuming the REST API is using the JSON API specification.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Ember Inspector</h3>
+						<ul>
+							<li>A Google Chrome or Mozilla Firefox extension, Ember Inspector aims to help debug Ember applications.</li>
+							<li>At any point in the application, you can identify which templates, components, and views are rendered.</li>
+							<li>With Ember Data, Ember Inspector also has access to the records that were loaded for each Ember model.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Other elements of the stack</h3>
+						<ul>
+							<li>FastBoot is an add-on to Ember CLI which provides server-side rendering for Ember applications (isomorphism).</li>
+							<li>Liquid Fire is an add-on which provides a declarative approach for building animations and transitions.</li>
+						</ul>
+					</section>
+				</section>
+
+				<!-- 3. Setting up Drupal -->
+				<section>
+					<section>
+						<h2>Setting up Drupal</h2>
+						<ul>
+							<li>Drupal setup and dependencies</li>
+							<li>JSON API setup</li>
+							<li>Configuring REST with config entities</li>
+							<li>CORS setup</li>
+						</ul>
+					</section>
+
+					<!-- 3.1. Drupal setup and dependencies -->
+					<section>
+						<h3>Drupal setup and dependencies</h3>
+						<p>Let's get the most up-to-date version of core, 8.2.x.</p>
+						<pre>
+							<code class="hljs bash">$ mkdir dublin-drupal
+$ cd dublin-drupal
+$ git clone git@github.com:drupal/drupal.git
+$ cd drupal
+$ composer install</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Drupal setup and dependencies</h3>
+						<ul>
+							<li>You can set up a Drupal site locally using Acquia Dev Desktop.</li>
+							<li>Give it a name such as <code>dublin-drupal.dd</code></li>
+							<li>Then, install Drupal normally.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Drupal setup and dependencies</h3>
+						<p>To speed things up, let's generate some content entities.</p>
+						<pre>
+							<code class="hljs bash">$ drush dl devel
+$ drush en -y devel
+$ drush en -y devel_generate
+$ drush genc 20
+$ drush gent tags 20
+$ drush genu 20</code>
+            </pre>
+					</section>
+
+					<!-- 3.2. JSON API setup -->
+					<section>
+						<h3>JSON API setup</h3>
+						<p>Now let's install JSON API and enable it. JSON API adds a new format, <code>api_json</code>.</p>
+						<pre>
+							<code class="hljs bash">$ drush dl jsonapi
+$ drush en -y jsonapi</code>
+            </pre>
+					</section>
+
+					<!-- 3.3. Configuring REST with config entities -->
+					<section>
+						<h3>Configuring REST with config entities</h3>
+						<p>New in 8.2.x is the notion of configuring REST through configuration entities.</p>
+						<pre>
+							<code class="hljs bash">$ atom core/modules/rest/config/optional/rest.resource.entity.node.yml</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Configuring REST with config entities</h3>
+						<p>You can copy the sample <code>rest.resource.entity.node.yml</code> and import directly at <code>/admin/config/development/configuration/single/import</code>.</p>
+						<pre>
+							<code class="hljs yaml">langcode: en
+status: true
+dependencies:
+  module:
+    - basic_auth
+    - hal
+    - jsonapi
+    - node
+id: entity.node
+plugin_id: 'entity:node'
+granularity: resource
+configuration:
+  methods:
+    - GET
+    - POST
+    - PATCH
+    - DELETE
+  formats:
+    - hal_json
+    - api_json
+  authentication:
+    - basic_auth</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Configuring REST with config entities</h3>
+						<p>Let's do the same with users by adding the <code>api_json</code> format.</p>
+						<pre>
+							<code class="hljs yaml">langcode: en
+status: true
+dependencies:
+  module:
+    - basic_auth
+    - hal
+    - jsonapi
+    - user
+id: entity.user
+plugin_id: 'entity:user'
+granularity: resource
+configuration:
+  methods:
+    - GET
+    - POST
+    - PATCH
+    - DELETE
+  formats:
+    - hal_json
+    - api_json
+  authentication:
+    - basic_auth</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Configuring REST with config entities</h3>
+						<p>Now, you can navigate to the following paths and see the result.</p>
+						<ul>
+							<li><code>/api/node/article?_format=api_json</code></li>
+							<li><code>/api/node/page?_format=api_json</code></li>
+							<li><code>/api/user/user?_format=api_json</code></li>
+						</ul>
+					</section>
+
+					<!-- 3.4. CORS setup -->
+					<section>
+						<h3>CORS setup</h3>
+						<p>Last but not least, don't forget to set up cross-origin resource sharing (CORS). The easiest way to do this is through the CORS module.</p>
+						<pre>
+							<code class="hljs bash">$ drush dl cors
+$ drush en -y cors</code>
+						</pre>
+					</section>
+					<section>
+						<h3>CORS setup</h3>
+						<p>For now, let's allow all requests from the origin of our soon-to-be Ember application, since we do not have security concerns.</p>
+						<pre>
+							<code class="nohighlight">*|http://localhost:4200</code>
+						</pre>
+					</section>
+					<section>
+						<h3>CORS setup</h3>
+						<p>Don't forget to clear cache after all of this work!</p>
+						<pre>
+							<code class="hljs bash">$ drush cr</code>
+						</pre>
+					</section>
+				</section>
+
+				<!-- 4. Writing an Ember application -->
+				<section>
+					<section>
+						<h2>Writing an Ember application</h2>
+						<ul>
+							<li>Ember setup</li>
+							<li>Writing components and routes</li>
+							<li>Models</li>
+							<li>The JSON API adapter</li>
+							<li>Templates</li>
+							<li>Extending our application</li>
+						</ul>
+					</section>
+
+					<!-- 4.1. Ember setup -->
+					<section>
+						<h3>Ember setup</h3>
+						<p>Ember makes it a cinch to get going quickly, because it is opinionated about application structure. Once you boot the server and navigate to the application, you'll see a friendly Tomster.</p>
+						<pre>
+							<code class="hljs bash">$ npm install -g ember-cli
+$ ember new dublin-ember
+$ cd dublin-ember
+$ ember server
+$ ember generate template application
+$ atom app/templates/application.hbs</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Ember setup</h3>
+						<p>Let's start by writing the entry point into our application, in <code>app/templates/application.hbs</code>.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/application.hbs}}
+&lt;h1&gt;Dublin Ember&lt;/h1&gt;
+{{outlet}}</code>
+						</pre>
+					</section>
+
+					<!-- 4.2. Writing components and routes -->
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Our ultimate (and ambitious) goal is to build an app that performs CRUD operations on content entities. Let's start simply with a route to view articles.</p>
+						<pre>
+							<code class="hljs bash">$ ember generate route articles
+$ atom app/templates/articles.hbs</code>
+						</pre>
+						<p>Note that you can also use the shorthand available in Ember:</p>
+						<pre>
+							<code class="hljs bash">$ ember g route articles</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Let's add some filler text for now.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles.hbs}}
+&lt;h2&gt;List of articles&lt;/h2&gt;</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Now let's open the corresponding route and add a placeholder model for now:</p>
+						<pre>
+							<code class="hljs bash">atom app/routes/articles.hbs</code>
+						</pre>
+						<pre>
+							<code class="hljs javascript">// app/routes/articles.js
+import Ember from 'ember';
+export default Ember.Route.extend({
+  model () {
+    return ['Article #1', 'Article #2', 'Article #3'];
+  }
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Within the template, we can now use Handlebars to iterate through the available data.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles.hbs}}
+&lt;h2&gt;List of articles&lt;/h2&gt;
+&lt;ul&gt;
+  {{#each model as |article|}}
+    &lt;li&gt;{{article}}&lt;/li&gt;
+  {{/each}}
+&lt;/ul&gt;</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>We may wish to reuse this component for other content entity types, and reusable components can help us with this.</p>
+						<pre>
+							<code class="hljs bash">$ ember generate component entity-list</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Let's generalize our old articles template for all content entities.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/components/entity-list.hbs}}
+&lt;h2&gt;{{title}}&lt;/h2&gt;
+&lt;ul&gt;
+  {{#each entities as |entity|}}
+    &lt;li&gt;{{entity}}&lt;/li&gt;
+  {{/each}}
+&lt;/ul&gt;</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>This means that within our articles template, we can invoke the component by replacing the contents with the following.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles.hbs}}
+{{entity-list title="List of articles" entities=model}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Let's flesh out our application a bit more by expanding the home page a bit with links to "pages" and "users".</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/application.hbs}}
+&lt;h1&gt;{{#link-to 'index' class="button"}}Dublin Ember{{/link-to}}&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;{{#link-to 'articles' class="button"}}Articles{{/link-to}}&lt;/li&gt;
+  &lt;li&gt;{{#link-to 'pages' class="button"}}Pages{{/link-to}}&lt;/li&gt;
+  &lt;li&gt;{{#link-to 'users' class="button"}}Users{{/link-to}}&lt;/li&gt;
+&lt;/ul&gt;
+{{outlet}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>Now we need to generate the corresponding new routes.</p>
+						<pre>
+							<code class="hljs bash">$ ember g route pages
+$ ember g route users</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>And in each of the templates we can now use our <code>entity-list</code> component.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/pages.hbs}}
+{{entity-list title="List of pages" entities=model}}</code>
+						</pre>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/users.hbs}}
+{{entity-list title="List of users" entities=model}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>And let's provide each of these routes with placeholder models. Here's the one for pages ...</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/pages.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return ['Page #1', 'Page #2', 'Page #3'];
+  }
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Writing components and routes</h3>
+						<p>... and for users.</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/users.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return ['User #1', 'User #2', 'User #3'];
+  }
+});</code>
+						</pre>
+					</section>
+
+					<!-- 4.3. Models -->
+					<section>
+						<h3>Models</h3>
+						<p>In Ember, models allow you to define how your data should be stored on the client side. Recall that the JSON API type in Drupal for articles is <code>node--article</code>.</p>
+						<pre>
+							<code class="hljs bash">$ ember g model node--article</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Models</h3>
+						<p>Let's define a few attributes that we know that we'll want to use from articles.</p>
+						<pre>
+							<code class="hljs javascript">// app/models/node--article.js
+import DS from 'ember-data';
+
+export default DS.Model.extend({
+  nid: DS.attr(),
+  uuid: DS.attr(),
+  title: DS.attr(),
+  created: DS.attr(),
+  body: DS.attr()
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Models</h3>
+						<p>Now let's do the same for pages ...</p>
+						<pre>
+							<code class="hljs bash">$ ember g model node--page</code>
+						</pre>
+						<pre>
+							<code class="hljs javascript">// app/models/node--page.js
+import DS from 'ember-data';
+
+export default DS.Model.extend({
+  nid: DS.attr(),
+  uuid: DS.attr(),
+  title: DS.attr(),
+  created: DS.attr(),
+  body: DS.attr()
+});</code>
+					</section>
+					<section>
+						<h3>Models</h3>
+						<p>... and users.</p>
+						<pre>
+							<code class="hljs bash">$ ember g model user--user</code>
+						</pre>
+						<pre>
+							<code class="hljs javascript">// app/models/user--user.js
+import DS from 'ember-data';
+
+export default DS.Model.extend({
+  uid: DS.attr(),
+  uuid: DS.attr(),
+  name: DS.attr(),
+  mail: DS.attr()
+});</code>
+						</pre>
+					</section>
+
+					<!-- 4.4. The JSON API adapter -->
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>There is only one piece missing: the connection to Drupal. Ember uses adapters to communicate with back ends via XHR. Let's create an adapter for our application.</p>
+						<pre>
+							<code class="hljs bash">$ ember g adapter application</code>
+						</pre>
+					</section>
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>By default, Ember will generate a <code>JSONAPIAdapter</code> for use with JSON API back ends. We can customize the adapter according to our back end.</p>
+						<pre>
+							<code class="hljs javascript">// app/adapters/application.js
+import DS from 'ember-data';
+
+export default DS.JSONAPIAdapter.extend({
+  host: 'http://dublin-drupal.dd:8083',
+  namespace: 'api'
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>Now let's use our Drupal data store by updating the model hook in each of our route handlers.</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/articles.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return this.get('store').findAll('node--article');
+  }
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>Let's do the same for pages ...</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/pages.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return this.get('store').findAll('node--page');
+  }
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>... and users. That's it, right!?</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/users.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return this.get('store').findAll('user--user');
+  }
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>The JSON API adapter</h3>
+						<p>Not so fast. As you can see, our app isn't working. If you take a look at the Drupal error log, you can see that 404s are happening because the paths are wrong. This means we have to customize our adapter further.</p>
+						<pre>
+							<code class="hljs javascript">// app/adapters/application.js
+import DS from 'ember-data';
+
+export default DS.JSONAPIAdapter.extend({
+  host: 'http://dublin-drupal.dd:8083',
+  namespace: 'api',
+  pathForType: function (type) {
+    let entityType;
+    switch (type) {
+      case 'user--user':
+        entityType = 'user/user';
+        break;
+      case 'node--page':
+        entityType = 'node/page';
+        break;
+      default:
+        entityType = 'node/article';
+    }
+    return entityType + '?_format=api_json';
+  }
+});</code>
+						</pre>
+					</section>
+
+					<!-- 4.5. Templates -->
+					<section>
+						<h3>Templates</h3>
+						<p>Here we are now! Now we can do some interesting things with the templates by referring to attributes.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles.hbs}}
+&lt;h2&gt;List of articles&lt;/h2&gt;
+
+{{#each model as |article|}}
+&lt;h3&gt;{{article.title}}&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;NID: {{article.nid}}&lt;/li&gt;
+  &lt;li&gt;UUID: {{article.uuid}}&lt;/li&gt;
+  &lt;li&gt;Created: {{article.created}}&lt;/li&gt;
+&lt;/ul&gt;
+{{article.body.value}}
+{{/each}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Templates</h3>
+						<p>Let's do the same for pages.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/pages.hbs}}
+&lt;h2&gt;List of pages&lt;/h2&gt;
+
+{{#each model as |page|}}
+&lt;h3&gt;{{page.title}}&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;NID: {{page.nid}}&lt;/li&gt;
+  &lt;li&gt;UUID: {{page.uuid}}&lt;/li&gt;
+  &lt;li&gt;Created: {{page.created}}&lt;/li&gt;
+&lt;/ul&gt;
+{{page.body.value}}
+{{/each}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Templates</h3>
+						<p>We want to expose slightly different attributes for users.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/users.hbs}}
+&lt;h2&gt;List of users&lt;/h2&gt;
+
+{{#each model as |user|}}
+&lt;h3&gt;{{user.name}}&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li>UID: {{user.uid}}&lt;/li&gt;
+  &lt;li>UUID: {{user.uuid}}&lt;/li&gt;
+  &lt;li>E-mail: {{user.mail}}&lt;/li&gt;
+&lt;/ul&gt;
+{{/each}}</code>
+						</pre>
+					</section>
+
+					<!-- 4.6. Extending our application -->
+					<section>
+						<h3>Extending our application</h3>
+						<p>Success! We've created our own content entity browser. But what about CRUD operations? For time's sake, we'll stick with just creation for now.</p>
+					</section>
+					<section>
+						<h3>Extending our application</h3>
+						<p>Let's create an additional <em>nested</em> route to handle article creation.</p>
+						<pre>
+							<code class="hljs bash">$ ember g route articles/new</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Extending our application</h3>
+						<p>Let's make a few changes to our "list of articles" template to be more generic.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles.hbs}}
+&lt;h2&gt;Articles&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;{{#link-to 'articles'}}List of articles{{/link-to}}&lt;/li&gt;
+  &lt;li&gt;{{#link-to 'articles.new'}}New article{{/link-to}}&lt;/li&gt;
+&lt;/ul&gt;
+
+{{outlet}}
+
+{{#each model as |article|}}
+&lt;h3&gt;{{article.title}}&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;NID: {{article.nid}}&lt;/li&gt;
+  &lt;li&gt;UUID: {{article.uuid}}&lt;/li&gt;
+  &lt;li&gt;Created: {{article.created}}&lt;/li&gt;
+&lt;/ul&gt;
+{{article.body.value}}
+{{/each}}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Extending our application</h3>
+						<p>In the nested route template, let's add a creation form.</p>
+						<pre>
+							<code class="hljs hbs">{{! app/templates/articles/new.hbs}}
+&lt;h3&gt;Create a new article&lt;/h3&gt;
+&lt;form {{action 'save' model on="submit"}}&gt;
+  {{input value=model.title placeholder="Enter title" name="name"}}&lt;br /&gt;
+  {{input value=model.body.value placeholder="Enter body" name="body"}}&lt;br /&gt;
+  &lt;button>Create article&lt;/button&gt;
+&lt;/form&gt;</code>
+					</section>
+					<section>
+						<h3>Extending our application</h3>
+						<p>And now the handling of the create action.</p>
+						<pre>
+							<code class="hljs javascript">// app/routes/articles/new.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model(params) {
+    return this.store.createRecord('node--article', params);
+  },
+  actions: {
+    save(record) {
+      console.log(record);
+      record.save().then(() => this.transitionTo('articles'));
+    },
+    willTransition() {
+      this._super(...arguments);
+      const record = this.controller.get('model');
+      record.rollbackAttributes();
+    }
+  }
+});</code>
+						</pre>
+					</section>
+				</section>
+
+				<!-- 5. Epilogue: Ember + Drupal = Drupal? -->
+				<section>
+					<section>
+						<h2>Epilogue: Ember + Drupal = Drupal?</h2>
+						<ul>
+							<li>Inversion of control</li>
+							<li>My (own) perspective</li>
+						</ul>
+					</section>
+
+					<!-- 5.1. Inversion of control -->
+					<section>
+						<h3>Inversion of control</h3>
+					</section>
+
+					<!-- 5.2. My (own) perspective -->
+					<section>
+						<h3>My (own) perspective</h3>
+					</section>
+				</section>
+
+				<section>
+					<h2>Go raibh maith agaibh!</h2>
+					<p>
+						<a href="https://drupal.org/u/prestonso">prestonso</a> &bull; <a href="https://twitter.com/prestonso">@prestonso</a> &bull; <a href="http://preston.so">preston.so</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
