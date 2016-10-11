@@ -1,25 +1,10 @@
-# Decoupled Drupal with React
-A presentation about decoupled Drupal as a RESTful back end for universal React applications.
+# Decoupled Drupal with Ember
+A presentation about decoupled Drupal as a JSON API back end for Ember applications.
 
 ## Abstract
-Of all the projects to emerge from the JavaScript renaissance, React, a library for rendering data in view components, has seen an explosion in popularity due to its compelling state system, colocation of view templates with view logic, and lack of assumptions about the stack. Created by Facebook to power its web applications, React is an intriguing candidate for use as a lightweight front end paired with decoupled Drupal. The Virtual DOM-based state system and JSX templating language are two of the most influential recent innovations in client-side frameworks.
+The Ember community describes its flagship framework as an "SDK for the web." Why has Ember captured the imagination of so many front-end developers involved in building single-page applications? Ember is an opinionated JavaScript framework which values convention over configuration — that is, a common set of practices rather than explicit settings. For this reason, Ember has significant advantages over other common JavaScript frameworks due to its large extent of standardization, including a codified directory structure for all applications (simplifying on-boarding) and a clear and interoperable approach to templating.
 
-Though React's most overt power lies in fully decoupled single-page applications, its component-based rendering system also opens the door for other approaches such as progressively decoupled Drupal, in which Drupal renders and serves pages before handing React control over CMS-rendered page components. Moreover, React’s surrounding ecosystem is increasingly extensive, particularly relevant as a GraphQL server for Drupal 8 begins to take shape.
+Not solely because of its open-source ethos and welcoming community, Ember is a prime candidate to develop Drupal-backed JavaScript applications due to its reach, its coverage, and its ease of use. Join me as we explore the inner workings of Ember, foundational concepts of Ember's ecosystem, how to decouple Drupal with an Ember front end, and what the future could bring in terms of more Ember within Drupal.
 
-What makes React so interesting for front-end developers as a solution for decoupled Drupal architectures? This session explores why React may be well-positioned for decoupled Drupal from a conceptual and architectural angle before examining integration techniques from a practical standpoint. Here are just a few of the concepts we’ll delve into:
-
-- Origins, motivations, and comparisons
-- React is a library, not an MVC framework
-- React architecture and components
-- State and the Virtual DOM
-- Rendering and JSX
-- Drawbacks of React
-- Why React for decoupled Drupal?
-- Fully decoupled Drupal with React
-- React and REST in Drupal
-- Working with Drupal data in React
-- Progressively decoupled Drupal with React
-- React and GraphQL in the Drupal ecosystem
-- Epilogue: React within Drupal?
-
-This session is geared toward front-end developers and engineers who are interested in decoupled architectures with Drupal and up-and-coming JavaScript frameworks. No prior knowledge of React is assumed, but strong familiarity with JavaScript will be necessary.
+## Presentations
+- [DrupalCon Dublin 2016](https://events.drupal.org/dublin2016/sessions/decoupled-drupal-and-ember); Dublin, Ireland
